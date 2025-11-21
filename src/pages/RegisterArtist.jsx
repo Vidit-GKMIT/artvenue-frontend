@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Toast from '../components/Toast'
+import { registerArtist } from '../api/auth.api'
 
 export default function RegisterArtist() {
     const navigate = useNavigate()
@@ -52,10 +53,7 @@ export default function RegisterArtist() {
         e.preventDefault()
 
         try {
-            const res = await axios.post(
-                `${import.meta.env.VITE_BASE_URL}/auth/registerArtist`,
-                form
-            )
+            const res = await registerArtist(form)
 
             if (res.data.success === false) {
                 if (res.data.errors && res.data.errors.length > 0) {
@@ -174,19 +172,21 @@ export default function RegisterArtist() {
                         <input type="hidden" name="role" value="Artist" />
                     </div>
 
-                    <button className="btn-green mb-4">Register Artist</button>
+                    <button className="mb-4 w-full rounded-xl bg-pink-600 py-3 text-sm font-semibold text-white transition hover:bg-pink-700">
+                        Register Artist
+                    </button>
 
                     <div className="flex flex-col gap-2 text-center">
                         <a
                             href="/register-owner"
-                            className="text-blue-600 hover:underline focus:no-underline active:no-underline outline-none"
+                            className="w-full rounded-lg bg-pink-50 py-2 font-semibold text-pink-700 transition hover:bg-pink-100"
                         >
                             Register as Owner instead?
                         </a>
 
                         <a
                             href="/login"
-                            className="text-gray-700 hover:underline focus:no-underline active:no-underline outline-none"
+                            className="w-full rounded-lg bg-pink-50 py-2 font-semibold text-pink-700 transition hover:bg-pink-100"
                         >
                             Already have an account? Login
                         </a>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
+import { registerOwner } from "../api/auth.api"
 
 export default function RegisterOwner() {
   const navigate = useNavigate();
@@ -28,11 +29,7 @@ export default function RegisterOwner() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/auth/registerOwner`,
-        form
-      );
-
+      const res = await registerOwner(form);
      
       if (res.data.success === false) {
         if (res.data.errors && res.data.errors.length > 0) {
@@ -120,19 +117,21 @@ export default function RegisterOwner() {
             <input type="hidden" name="role" value="Owner" />
           </div>
 
-          <button className="btn-green mb-4">Register Owner</button>
+          <button className="mb-4 w-full rounded-xl bg-pink-600 py-3 text-sm font-semibold text-white transition hover:bg-pink-700">
+            Register Owner
+          </button>
 
           <div className="flex flex-col gap-2 text-center">
             <a
               href="/register-artist"
-              className="text-blue-600 hover:underline focus:no-underline active:no-underline outline-none"
+              className="w-full rounded-lg bg-pink-50 py-2 font-semibold text-pink-700 transition hover:bg-pink-100"
             >
               Register as Artist instead?
             </a>
 
             <a
               href="/login"
-              className="text-gray-700 hover:underline focus:no-underline active:no-underline outline-none"
+              className="w-full rounded-lg bg-pink-50 py-2 font-semibold text-pink-700 transition hover:bg-pink-100"
             >
               Already have an account? Login
             </a>

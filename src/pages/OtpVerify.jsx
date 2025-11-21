@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
+import { verifyOtp } from "../api/auth.api";
 
 export default function OtpVerify() {
   const navigate = useNavigate();
@@ -22,26 +23,29 @@ export default function OtpVerify() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/verify-otp`, {
-        email,
-        otp,
-      });
+      const res = await verifyOtp(email, otp);
 
       if (res.data.success) {
-       
+        // Set token and user immediately
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.data));
+
         showToast(res.data.message, "success");
 
-  
+        // Navigate immediately after a short delay to show the success message
         setTimeout(() => {
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("user", JSON.stringify(res.data.data));
-
-       
-          const role = res.data.data.role.role.toLowerCase();
-
-          if (role === "owner") navigate("/owner");
-          else navigate("/artist");
-        }, 1200);
+          try {
+            // Determine role: check for categories field (artist has it, owner doesn't)
+            if (res.data.data.categories) {
+              navigate("/artist", { replace: true });
+            } else {
+              navigate("/owner", { replace: true });
+            }
+          } catch (error) {
+            console.error("Error during redirect:", error);
+            showToast("Error during redirect. Please try logging in.", "error");
+          }
+        }, 500);
 
       } else {
 
@@ -82,12 +86,14 @@ export default function OtpVerify() {
             required
           />
 
-          <button className="btn-primary">Verify OTP</button>
+          <button className="w-full rounded-xl bg-pink-600 py-3 text-sm font-semibold text-white transition hover:bg-pink-700">
+            Verify OTP
+          </button>
 
-          <div className="text-center mt-4">
+          <div className="mt-4">
             <a
               href="/login"
-              className="text-gray-700 hover:underline focus:no-underline active:no-underline outline-none"
+              className="w-full rounded-xl bg-pink-50 py-2 text-pink-700 transition hover:bg-pink-100 font-medium block text-center"
             >
               Back to Login
             </a>
